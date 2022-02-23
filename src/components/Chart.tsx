@@ -77,12 +77,13 @@ const Chart: React.FC<Props> = ({ img, name, tracks }) => {
             <option value="desc">Longer first</option>
           </select>
         </div>
-        <section className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 ${tracks && "lg:grid-rows-5 xl:grid-rows-4"} lg:grid-flow-col gap-1 md:gap-4 mx-1 md:mx-16`}>
+        <section className={`relative grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 ${tracks && "lg:grid-rows-5 xl:grid-rows-4"} lg:grid-flow-col gap-1 md:gap-4 mx-1 md:mx-16`}>
           {!sortedTracks ? (
             <div className="w-full lg:col-span-2 xl: col-span-3"><Loader /></div>
           ) : (
             sortedTracks.map(track => (
               <Track
+                key={track.id}
                 img={track.album.cover_small}
                 artist={track.artist.name}
                 duration={track.duration}

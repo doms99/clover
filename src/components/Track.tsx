@@ -1,4 +1,7 @@
+import { useLayoutEffect, useRef } from "react";
+import { animated, useSpring } from "@react-spring/web";
 import Arrow from "./Arrow";
+import { useReorder } from "../hooks";
 
 function formatDuration(secunds: number) {
   let res: string = (secunds % 60).toString().padStart(2, '0');
@@ -20,8 +23,10 @@ export type Props = {
 }
 
 const Track: React.FC<Props> = ({ title, rank, artist, duration, img }) => {
+  const [ref, props] = useReorder<HTMLElement>();
+
   return (
-    <article className="grid grid-cols-[min-content_1fr_1fr_min-content] grid-rows-[2.5rem] w-full h-16 p-3 rounded-lg bg-white drop-shadow-md shadow-slate-900">
+    <animated.article style={props} ref={ref} className="grid grid-cols-[min-content_1fr_1fr_min-content] grid-rows-[2.5rem] w-full h-16 p-3 rounded-lg bg-white drop-shadow-md shadow-slate-900">
       <div className="flex items-center h-full">
         <h6 className="ml-2 mr-4 font-semibold">{rank.toString().padStart(2, '0')}</h6>
         <div
@@ -41,7 +46,7 @@ const Track: React.FC<Props> = ({ title, rank, artist, duration, img }) => {
         <Arrow className="stroke-slate-300 inline-block w-1/4 mr-2" />
         <Arrow className="stroke-slate-300 inline-block w-1/4 rotate-180" />
       </button>
-    </article>
+    </animated.article>
   )
 }
 
