@@ -3,6 +3,9 @@ module.exports = {
   content: ["./src/**/*.{html,tsx,ts,jsx,js}"],
   theme: {
     extend: {
+      fontFamily: {
+        'filler': ['Flow Block']
+      },
       fontSize: {
         'title': ['6rem', '6.05rem'],
         'title-lg': ['4.5rem', '4.55rem'],

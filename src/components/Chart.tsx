@@ -1,19 +1,41 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react"
-import { Track as TrackType } from "../api/types";
-import Loader from "./Loader";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "../redux/hooks";
+import { setTracks } from "../redux/slice";
+import Arrow from "./Arrow";
+import Header from "./Header";
+import Logo from "./Logo";
+import Navigation from "./Navigation";
 import Track from "./Track"
+import TrackDetails from "./TrackDetails";
 
 export type Props = {
   name: string,
   img: string,
-  tracks?: TrackType[]
+  id: number,
+
+  next: () => void,
+  previous: () => void
 }
 
 type Sort = "rank" | "asc" | "desc";
 
-const Chart: React.FC<Props> = ({ img, name, tracks }) => {
-  const [sort, setSort] = useState<Sort>("rank")
-  const ref = useRef<HTMLDivElement>(null)
+const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
+  const [sort, setSort] = useState<Sort>("rank");
+  const tracks = useSelector(state => state.app.tracks)[id];
+  const ref = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(tracks) return;
+
+    fetch(`/chart/${id}/tracks`)
+    .then(res => res.json())
+    .then(res => {
+      console.log(res);
+
+      dispatch(setTracks({genreId: id, tracks: res.data}));
+    });
+  }, [dispatch, id, tracks]);
 
   useLayoutEffect(() => {
     const controller = new AbortController();
@@ -49,19 +71,14 @@ const Chart: React.FC<Props> = ({ img, name, tracks }) => {
 
   return (
     <div ref={ref} className="grid grid-layout-lite md:grid-layout-full">
-      <header
-        className="relative grid-header h-full overflow-hidden z-20"
-      >
-        <div
-          style={{backgroundImage: `url(${img})`}}
-          className="absolute top-[-5%] left-[-5%] h-[110%] w-[110%] bg-none bg-bottom bg-cover blur-sm"
-        />
-        <div className="absolute bottom-0 left-0 w-full mx-8 md:mx-16 mb-8 text-white">
-          <h3 className="text-xl md:text-3xl mb-2 font-light"><span className="font-semibold">Top</span> 10</h3>
-          <h1 className="text-title-md lg:text-title-lg xl:text-title font-bold">{name}</h1>
-        </div>
-      </header>
-      <aside className="grid-sidebar w-full z-0 bg-white shadow-slate-900 drop-shadow-lg"></aside>
+      <Header
+        img={img}
+        name={name}
+      />
+      <Navigation
+        next={next}
+        previous={previous}
+      />
       <main className="grid-content w-full py-8 bg-slate-100">
         <div className="flex justify-between mb-6 mx-8 md:mx-16">
           <h3 className="text-xl font-medium">Tracks</h3>
@@ -77,13 +94,17 @@ const Chart: React.FC<Props> = ({ img, name, tracks }) => {
             <option value="desc">Longer first</option>
           </select>
         </div>
-        <section className={`relative grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 ${tracks && "lg:grid-rows-5 xl:grid-rows-4"} lg:grid-flow-col gap-1 md:gap-4 mx-1 md:mx-16`}>
+        <section className={`relative grid
+                             grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3
+                             lg:grid-rows-5 2xl:grid-rows-4 lg:grid-flow-col
+                             gap-2 md:gap-4 mx-1 md:mx-16`
+        }>
           {!sortedTracks ? (
-            <div className="w-full lg:col-span-2 xl: col-span-3"><Loader /></div>
+            Array.from(Array(10)).map((i) => <Track key={i}/>)
           ) : (
             sortedTracks.map(track => (
               <Track
-                key={track.id}
+                key={track.position}
                 img={track.album.cover_small}
                 artist={track.artist.name}
                 duration={track.duration}

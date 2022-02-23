@@ -69,4 +69,22 @@
   .track-grid {
     grid-template-columns: repeat(5, min-content) ;
   }
+
+  .backdrop {
+    @apply before:content-[''] before:absolute before:top-0 before:left-0
+           before:w-full before:h-full before:z-10
+           before:bg-slate-100 before:opacity-80;
+  }
+
+  .grid-modal {
+    @apply grid-cols-2 grid-rows-3;
+
+    grid-template-areas: "block a"
+                         "block b"
+                         "c d";
+  }
+
+  .grid-block {
+    grid-area: block;
+  }
 }

@@ -1,21 +1,32 @@
-import { useEffect, useState } from 'react';
-import { Track } from './api/types';
-import Chart from './components/Chart';
+import { useEffect, useState } from "react";
+import Chart from "./components/Chart";
+import { useSelector, useDispatch } from "./redux/hooks";
+import { setGenres } from "./redux/slice";
 
 function App() {
-  const [tracks, setTracks] = useState<Track[]>();
+  const [currGenre, setCurrGenre] = useState(0);
+  const genres = useSelector(state => state.app.genres);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch('/chart/0/tracks')
+    if(genres.length !== 0) return;
+
+    fetch("/genre")
     .then(res => res.json())
-    .then(res => setTracks(res.data));
+    .then(res => {
+      dispatch(setGenres(res.data));
+    })
   }, []);
 
-  return (
+  return genres.length === 0 ? (
+    null
+  ) : (
     <Chart
-      img='https://e-cdns-images.dzcdn.net/images/misc/db7a604d9e7634a67d45cfc86b48370a/1000x1000-000000-80-0-0.jpg'
-      name='Rap/Hip Hop'
-      tracks={tracks}
+      previous={() => setCurrGenre(curr => (curr-1 + genres.length) % genres.length)}
+      next={() => setCurrGenre(curr => (curr+1 + genres.length) % genres.length)}
+      img={genres[currGenre].picture_big}
+      name={genres[currGenre].name}
+      id={genres[currGenre].id}
     />
   );
 }
