@@ -1,25 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react';
+import { Track } from './api/types';
+import Chart from './components/Chart';
 
 function App() {
+  const [tracks, setTracks] = useState<Track[]>();
+
+  useEffect(() => {
+    fetch('/chart/0/tracks')
+    .then(res => res.json())
+    .then(res => setTracks(res.data));
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Chart
+      img='https://e-cdns-images.dzcdn.net/images/misc/db7a604d9e7634a67d45cfc86b48370a/1000x1000-000000-80-0-0.jpg'
+      name='Rap/Hip Hop'
+      tracks={tracks}
+    />
   );
 }
 
