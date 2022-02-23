@@ -2,24 +2,15 @@ import { useLayoutEffect, useRef } from "react";
 import { animated, useSpring } from "@react-spring/web";
 import Arrow from "./Arrow";
 import { useReorder } from "../hooks";
-
-function formatDuration(secunds: number) {
-  let res: string = (secunds % 60).toString().padStart(2, '0');
-  let rem: number = Math.floor(secunds/60);
-  while(rem > 0) {
-    res = `${rem % 60}:${res}`;
-    rem = Math.floor(rem/60);
-  }
-
-  return res;
-}
+import { formatDuration } from "../utils";
 
 export type Props = {
   title: string,
   rank: number,
   artist: string,
   duration: number,
-  img: string
+  img: string,
+  expand?: () => void
 }
 
 const defaultProps: Props = {
@@ -32,10 +23,11 @@ const defaultProps: Props = {
 
 const Track: React.FC<Props | {}> = (props) => {
   const loading = Object.keys(props).length === 0;
-  const { title, rank, artist, duration, img } = loading ? defaultProps : props as Props;
+  const { title, rank, artist, duration, img, expand } = loading ? defaultProps : props as Props;
 
   const [ref, animProps] = useReorder<HTMLDivElement>();
 
+  const [time, dateTime] = formatDuration(duration);
   return (
     <animated.div style={animProps} ref={ref} className="rounded-lg bg-white drop-shadow-md shadow-slate-900">
       <article
@@ -49,31 +41,30 @@ const Track: React.FC<Props | {}> = (props) => {
           <div
             style={{backgroundImage: `url(${img})`}}
             title="Album cover"
-            className="aspect-square h-full rounded-md bg-cover bg-center bg-slate-300"
+            className="aspect-square h-full rounded-md bg-central bg-slate-300"
           />
         </div>
         <div className="min-w-0 ml-4">
           <h1
           title={title}
-          className="text-lg leading-5 font-semibold
-                     whitespace-nowrap text-ellipsis overflow-hidden"
-          >
+          className="text-lg leading-5 font-semibold dot-string">
             {title}
           </h1>
-          <address className="text-sm whitespace-nowrap
-                              text-ellipsis overflow-hidden"
-          >
+          <address className="text-sm dot-string">
             {artist}
           </address>
         </div>
-        <time className="m-auto">{formatDuration(duration)}</time>
-        <button className="aspect-square flex justify-center items-center h-full p-2 transition-all
-                         hover:bg-slate-100 active:bg-slate-200
-                           rounded-full -rotate-45"
-        >
-          <Arrow className="stroke-slate-300 inline-block w-1/4 mr-2" />
-          <Arrow className="stroke-slate-300 inline-block w-1/4 rotate-180" />
-        </button>
+        <time dateTime={dateTime} className="m-auto">{time}</time>
+        {expand && (
+          <button
+            className="aspect-square flex flex-center h-full p-2 btn
+                       rounded-full -rotate-45"
+            onClick={expand}
+          >
+            <Arrow className="stroke-slate-300 inline-block w-1/4 mr-2" />
+            <Arrow className="stroke-slate-300 inline-block w-1/4 rotate-180" />
+          </button>
+        )}
       </article>
     </animated.div>
   )

@@ -70,21 +70,53 @@
     grid-template-columns: repeat(5, min-content) ;
   }
 
+  .bg-central {
+    @apply bg-cover bg-center bg-no-repeat;
+  }
+
+  .central {
+    @apply top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+  }
+
   .backdrop {
-    @apply before:content-[''] before:absolute before:top-0 before:left-0
-           before:w-full before:h-full before:z-10
-           before:bg-slate-100 before:opacity-80;
+    @apply before:content-[''] before:fixed before:top-0 before:left-0
+           before:w-screen before:h-screen before:z-20
+           before:bg-slate-400 before:opacity-60;
+  }
+
+  .backdrop > * {
+    @apply z-30;
   }
 
   .grid-modal {
-    @apply grid-cols-2 grid-rows-3;
-
-    grid-template-areas: "block a"
-                         "block b"
-                         "c d";
+    grid-template-columns: minmax(max-content, 1fr) 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: "side top top top"
+                         "side middle middle middle"
+                         "side a b c";
   }
 
-  .grid-block {
-    grid-area: block;
+  .grid-side {
+    grid-area: side;
+  }
+
+  .grid-top {
+    grid-area: top;
+  }
+
+  .grid-middle {
+    grid-area: middle;
+  }
+
+  .dot-string {
+    @apply whitespace-nowrap text-ellipsis overflow-hidden;
+  }
+
+  .btn {
+    @apply transition-all hover:bg-slate-100 active:bg-slate-200;
+  }
+
+  .flex-center {
+    @apply justify-center items-center;
   }
 }

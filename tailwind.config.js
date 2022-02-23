@@ -7,9 +7,9 @@ module.exports = {
         'filler': ['Flow Block']
       },
       fontSize: {
-        'title': ['6rem', '6.05rem'],
-        'title-lg': ['4.5rem', '4.55rem'],
-        'title-md': ['2.5rem', '2.55rem']
+        'title': ['6rem', '6.1rem'],
+        'title-lg': ['4.5rem', '4.6rem'],
+        'title-md': ['2.5rem', '2.6rem']
       },
       keyframes: {
         grow: {

@@ -6,7 +6,7 @@ export type Props = {
 const Header: React.FC<Props> = ({ img, name }) => {
   return (
     <header
-        className="relative grid-header h-full overflow-hidden z-20"
+        className="relative grid-header h-full overflow-hidden z-10"
     >
       <div
         style={{backgroundImage: `url(${img})`}}

@@ -19,19 +19,15 @@ const Navigation: React.FC<Props> = ({ next, previous }) => {
       <div className="w-max m-auto ">
         <button
           onClick={previous}
-          className="inline-flex justify-center items-center
-                      aspect-square h-12 p-4 mr-4 transition-all
-                    hover:bg-slate-100 active:bg-slate-200
-                      rounded-full"
+          className="inline-flex flex-center aspect-square
+                     h-12 p-4 mr-4 btn rounded-full"
         >
           <Arrow className="stroke-slate-300 h-full m-auto" />
         </button>
         <button
           onClick={next}
-          className="inline-flex justify-center items-center
-                      aspect-square h-12 p-4 transition-all
-                    hover:bg-slate-100 active:bg-slate-200
-                      rounded-full"
+          className="inline-flex flex-center aspect-square
+                     h-12 p-4 mr-4 btn rounded-full"
         >
           <Arrow className="stroke-slate-300 h-full m-auto rotate-180" />
         </button>

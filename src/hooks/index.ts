@@ -30,3 +30,17 @@ export function useReorder<T extends HTMLElement>() {
 
   return [ref, props] as const;
 }
+
+export function useScreenMinHeight<T extends HTMLElement>(ref: React.RefObject<T>) {
+  useLayoutEffect(() => {
+    const controller = new AbortController();
+
+    ref.current!.style.minHeight = `${(window.innerHeight-1)}px`;
+
+    window.addEventListener("resize", () => {
+      ref.current!.style.minHeight = `${(window.innerHeight-1)}px`
+    }, { signal: controller.signal });
+
+    return () => controller.abort();
+  });
+}
