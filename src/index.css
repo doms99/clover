@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+
   ::-webkit-scrollbar {
     width: 10px;
   }
@@ -21,6 +22,10 @@
 
   body {
     @apply m-0;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
   }
 
   select {
@@ -81,19 +86,28 @@
   .backdrop {
     @apply before:content-[''] before:fixed before:top-0 before:left-0
            before:w-screen before:h-screen before:z-20
-           before:bg-slate-400 before:opacity-60;
+           before:bg-slate-400 before:opacity-0 before:transition-opacity;
   }
 
   .backdrop > * {
     @apply z-30;
   }
 
-  .grid-modal {
+  .grid-modal-full {
     grid-template-columns: max-content 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
     grid-template-areas: "side a"
                          "side b"
                          "side c";
+  }
+
+  .grid-modal-lite {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, auto);
+    grid-template-areas: "side"
+                         "a"
+                         "b"
+                         "c";
   }
 
   .grid-side {

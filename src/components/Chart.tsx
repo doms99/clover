@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Track as TrackType } from "../api/types";
 import { useScreenMinHeight } from "../hooks";
 import { useDispatch, useSelector } from "../redux/hooks";
@@ -42,7 +42,7 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
 
 
 
-  let sortedTracks = (() => {
+  let sortedTracks = useMemo(() => {
     if(!tracks) return;
 
     switch(sort) {
@@ -56,11 +56,13 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
         return tracks;
       }
     }
-  })()
+  }, [tracks, sort]);
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setSort(e.target.value as Sort)
   }
+
+  const length = tracks ? tracks.length : 10;
 
   return (
     <>
@@ -70,6 +72,7 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
         duration={modal.duration}
         title={modal.title}
         rank={modal.position}
+        genre={name}
         album={modal.album.title}
         preview={modal.preview}
         close={() => setModal(undefined)}
@@ -77,8 +80,12 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
       <div ref={ref} className="grid grid-layout-lite md:grid-layout-full">
         <Header
           img={img}
-          name={name}
-        />
+        >
+          <h3 className="text-xl md:text-3xl mb-2 font-light">
+            <span className="font-semibold">Top</span> {length}
+          </h3>
+          <h1 className="text-title-md lg:text-title-lg xl:text-title font-bold">{name}</h1>
+        </Header>
         <Navigation
           next={next}
           previous={previous}
@@ -100,7 +107,9 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
           </div>
           <section className={`relative grid
                                grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3
-                               lg:grid-rows-5 2xl:grid-rows-4 lg:grid-flow-col
+                               lg:grid-rows-${Math.ceil(length/2)}
+                               2xl:grid-rows-${Math.ceil(length/3)}
+                               lg:grid-flow-col
                                gap-2 md:gap-4 mx-1 md:mx-16`
           }>
             {!sortedTracks ? (
@@ -108,7 +117,7 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
             ) : (
               sortedTracks.map((track, index) => (
                 <Track
-                  key={track.position}
+                  key={track.id}
                   img={track.album.cover_small}
                   artist={track.artist.name}
                   duration={track.duration}

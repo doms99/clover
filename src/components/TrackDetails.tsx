@@ -4,10 +4,13 @@ import Cancel from "../icons/Cancel";
 import Pause from "../icons/Pause";
 import Play from "../icons/Play";
 import Tag from "./Tag";
+import { useLoadAndDispose } from "../hooks";
+import { animated } from "@react-spring/web";
 
 export type Props = {
   title: string,
   rank: number,
+  genre?: string,
   artist: string,
   duration: number,
   img: string
@@ -16,10 +19,11 @@ export type Props = {
   close: () => void
 }
 
-const TrackDetails: React.FC<Props> = ({ title, rank, artist, duration, img, album, preview, close }) => {
+const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, img, album, preview, close }) => {
   const [time, dateTime] = formatDuration(duration);
   const [playing, setPlaying] = useState(false);
   const ref = useRef<HTMLAudioElement>();
+  const [mainProps, onExit, opacityRef] = useLoadAndDispose<HTMLDivElement>();
 
   function handlePlay() {
     if(!preview) return;
@@ -42,13 +46,13 @@ const TrackDetails: React.FC<Props> = ({ title, rank, artist, duration, img, alb
 
   function handleClose() {
     if(ref.current && !ref.current.paused) ref.current.pause();
-    close();
+    onExit(close);
   }
 
   return (
-    <div className="backdrop">
-      <section className="fixed central grid grid-modal gap-4
-                          w-max p-4 pr-16
+    <div ref={opacityRef} className="backdrop">
+      <animated.section style={mainProps} className="fixed central grid grid-modal-lite sm:grid-modal-full gap-4
+                          w-5/6 max-w-full md:w-max max-h-[5/6] p-4 md:pr-16
                           font-medium text-left
                           bg-white rounded-3xl text-xl
                           shadow-slate-800 drop-shadow-md"
@@ -60,18 +64,18 @@ const TrackDetails: React.FC<Props> = ({ title, rank, artist, duration, img, alb
           <Cancel className="fill-slate-300 h-full"/>
         </button>
         <div
-          className="relative grid-side aspect-square h-64 rounded-xl bg-central bg-slate-600 overflow-hidden"
+          className="relative grid-side aspect-square w-full sm:h-72 rounded-xl bg-central bg-slate-600 drop-shadow-sm overflow-hidden"
         >
-          <img src={img} alt="Album cover" className="absolute central" />
+          <img src={img} alt="Album cover" className="h-full" />
           {preview && (
             <button
-              className="absolute central p-2 hover:p-1 aspect-square h-1/3 transition-all"
+              className="absolute central p-2 hover:p-1 aspect-square h-1/3 drop-shadow-lg transition-all"
               onClick={handlePlay}
             >
               {playing ? (
-                <Pause className="fill-slate-50 h-full"/>
+                <Pause className="fill-slate-50 h-full m-auto"/>
               ) : (
-                <Play className="fill-slate-50 h-full"/>
+                <Play className="fill-slate-50 h-full m-auto"/>
               )}
             </button>
           )}
@@ -79,17 +83,20 @@ const TrackDetails: React.FC<Props> = ({ title, rank, artist, duration, img, alb
         <Tag label="Title" >
           <h1
             title={title}
-            className="text-title-md font-bold text-slate-600 dot-string">
+            className="text-2xl md:text-title-md font-bold text-slate-600">
               {title}
           </h1>
         </Tag>
         <Tag label="Rank" >
-          <p className="text-title-md font-semibold text-slate-600">{formatOrdinal(rank)}</p>
+          <p>
+            <span className="text-2xl md:text-title-md font-semibold text-slate-600">{formatOrdinal(rank)}</span>
+            {genre && <span className="text-xl md:text-3xl font-light text-slate-400">{` in ${genre}`}</span>}
+          </p>
         </Tag>
 
-        <div className="flex justify-between">
+        <div className="grid grid-cols-2 md:grid-cols-[auto_auto_auto] ">
           <Tag label="Artist" >
-            <address className="text-lg text-slate-600 dot-string">
+            <address className="text-lg text-slate-600">
               {artist}
             </address>
           </Tag>
@@ -98,13 +105,15 @@ const TrackDetails: React.FC<Props> = ({ title, rank, artist, duration, img, alb
               <time dateTime={dateTime} className="m-auto">{time}</time>
             </p>
           </Tag>
-          <Tag label="Album" >
-            <p className="text-lg text-slate-600 dot-string">
-              {album}
-            </p>
-          </Tag>
+          <div className="col-span-2 md:col-span-1">
+            <Tag label="Album" >
+              <p className="text-lg text-slate-600">
+                {album}
+              </p>
+            </Tag>
+          </div>
         </div>
-      </section>
+      </animated.section>
     </div>
   )
 }

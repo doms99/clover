@@ -31,42 +31,43 @@ export function useReorder<T extends HTMLElement>() {
   return [ref, props] as const;
 }
 
-// export function useTransition<T extends HTMLElement>(click: { x: number, y: number }) {
-//   const ref = useRef<T>(null);
-//   const [props, animate] = useSpring(() => ({ transform: "translate(0) scale(0)" }));
+export function useLoadAndDispose<T extends HTMLElement>() {
+  const [props, animate] = useSpring(() => ({ transform: "translate(-50%, -50%) scale(0)" }));
+  const opacityRef = useRef<T>(null);
 
-//   useLayoutEffect(() => {
-//     if(!ref.current) return;
+  useLayoutEffect(() => {
+    animate.start({
+      transform: "translate(-50%, -50%) scale(1)",
+      config: {
+        mass: 0.3,
+        tension: 250
+      }
+    });
 
-//     animate.start({
-//       from: {
-//         transfrom: `translate(${click.x - ref.current.offsetLeft}px, ${click.y - ref.current.offsetTop}px) scale(0)`,
-//       },
-//       to: { transform: "translate(0) scale(1)" }
-//     });
-//   });
+    if(!opacityRef.current) return;
 
-//   function onExit(callback: () => void) {
-//     if(!ref.current) {
-//       callback();
-//       return;
-//     }
+    opacityRef.current.classList.add("before:opacity-60");
+  });
 
-//     animate.start({
-//       from: { transform: "translate(0)", scale: 1 },
-//       to: {
-//         transfrom: `translate(${click.x - ref.current.offsetLeft}px, ${click.y - ref.current.offsetTop}px)`,
-//         scale: 0
-//       },
-//       config: {
-//         precision: 1
-//       },
-//       onRest: callback
-//     });
-//   }
+  function onExit(callback: () => void) {
+    animate.start({
+      transform: "translate(-50%, -50%) scale(0)",
+      config: {
+        precision: 0.1,
+        mass: 0.3,
+        tension: 250
+      },
+      onRest: callback
+    });
 
-//   return [ref, props, onExit] as const;
-// }
+
+    if(!opacityRef.current) return;
+
+    opacityRef.current.classList.add("before:opacity-0");
+  }
+
+  return [props, onExit, opacityRef] as const;
+}
 
 export function useScreenMinHeight<T extends HTMLElement>(ref: React.RefObject<T>) {
   useLayoutEffect(() => {

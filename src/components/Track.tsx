@@ -1,5 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
-import { animated, useSpring } from "@react-spring/web";
+import { animated } from "@react-spring/web";
 import Arrow from "../icons/Arrow";
 import { useReorder } from "../hooks";
 import { formatDuration } from "../utils";
@@ -10,7 +9,7 @@ export type Props = {
   artist: string,
   duration: number,
   img: string,
-  expand?: () => void
+  expand?: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void
 }
 
 const defaultProps: Props = {
