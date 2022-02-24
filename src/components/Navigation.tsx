@@ -1,6 +1,6 @@
 import React from 'react'
-import Arrow from './Arrow'
-import Logo from './Logo'
+import Arrow from '../icons/Arrow'
+import Logo from '../icons/Logo'
 
 export type Props = {
   next: () => void,

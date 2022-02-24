@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { animated, useSpring } from "@react-spring/web";
-import Arrow from "./Arrow";
+import Arrow from "../icons/Arrow";
 import { useReorder } from "../hooks";
 import { formatDuration } from "../utils";
 

@@ -31,6 +31,43 @@ export function useReorder<T extends HTMLElement>() {
   return [ref, props] as const;
 }
 
+// export function useTransition<T extends HTMLElement>(click: { x: number, y: number }) {
+//   const ref = useRef<T>(null);
+//   const [props, animate] = useSpring(() => ({ transform: "translate(0) scale(0)" }));
+
+//   useLayoutEffect(() => {
+//     if(!ref.current) return;
+
+//     animate.start({
+//       from: {
+//         transfrom: `translate(${click.x - ref.current.offsetLeft}px, ${click.y - ref.current.offsetTop}px) scale(0)`,
+//       },
+//       to: { transform: "translate(0) scale(1)" }
+//     });
+//   });
+
+//   function onExit(callback: () => void) {
+//     if(!ref.current) {
+//       callback();
+//       return;
+//     }
+
+//     animate.start({
+//       from: { transform: "translate(0)", scale: 1 },
+//       to: {
+//         transfrom: `translate(${click.x - ref.current.offsetLeft}px, ${click.y - ref.current.offsetTop}px)`,
+//         scale: 0
+//       },
+//       config: {
+//         precision: 1
+//       },
+//       onRest: callback
+//     });
+//   }
+
+//   return [ref, props, onExit] as const;
+// }
+
 export function useScreenMinHeight<T extends HTMLElement>(ref: React.RefObject<T>) {
   useLayoutEffect(() => {
     const controller = new AbortController();
@@ -44,3 +81,4 @@ export function useScreenMinHeight<T extends HTMLElement>(ref: React.RefObject<T
     return () => controller.abort();
   });
 }
+

@@ -64,7 +64,7 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
 
   return (
     <>
-      {modal ? <TrackDetails
+      {modal && <TrackDetails
         img={modal.album.cover_big}
         artist={modal.artist.name}
         duration={modal.duration}
@@ -73,7 +73,7 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
         album={modal.album.title}
         preview={modal.preview}
         close={() => setModal(undefined)}
-      /> : null}
+      />}
       <div ref={ref} className="grid grid-layout-lite md:grid-layout-full">
         <Header
           img={img}
@@ -104,7 +104,7 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
                                gap-2 md:gap-4 mx-1 md:mx-16`
           }>
             {!sortedTracks ? (
-              Array.from(Array(10)).map((i) => <Track key={i}/>)
+              Array.from(Array(10).keys()).map((i) => <Track key={'loader'+i}/>)
             ) : (
               sortedTracks.map((track, index) => (
                 <Track

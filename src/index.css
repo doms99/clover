@@ -89,23 +89,15 @@
   }
 
   .grid-modal {
-    grid-template-columns: minmax(max-content, 1fr) 1fr 1fr;
+    grid-template-columns: max-content 1fr;
     grid-template-rows: 1fr 1fr 1fr;
-    grid-template-areas: "side top top top"
-                         "side middle middle middle"
-                         "side a b c";
+    grid-template-areas: "side a"
+                         "side b"
+                         "side c";
   }
 
   .grid-side {
     grid-area: side;
-  }
-
-  .grid-top {
-    grid-area: top;
-  }
-
-  .grid-middle {
-    grid-area: middle;
   }
 
   .dot-string {
