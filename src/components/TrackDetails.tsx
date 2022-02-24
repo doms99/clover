@@ -1,12 +1,66 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { formatDuration, formatOrdinal } from "../utils";
 import Cancel from "../icons/Cancel";
 import Pause from "../icons/Pause";
 import Play from "../icons/Play";
 import Tag from "./Tag";
 import { useLoad } from "../hooks";
+import { useSelector } from "../redux/hooks";
+import { useDispatch } from "react-redux";
+import { setModal } from "../redux/slice";
 
-export type Props = {
+const TrackDetails: React.FC = () => {
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>();
+  const track = useSelector(state => state.app.modal);
+  const genre = useSelector(state => state.app.genres[state.app.currentGenre]?.name);
+  const dispatch = useDispatch();
+
+  const playPause = useCallback(() => {
+    if(!track || !track.preview) return;
+
+    if(!audioRef.current) {
+      const audio = new Audio(track.preview);
+      audio.addEventListener("play", () => setPlaying(true));
+      audio.addEventListener("pause", () => setPlaying(false));
+      audio.addEventListener("ended", () => {
+        setPlaying(false);
+        audio.currentTime = 0;
+      });
+
+      audioRef.current = audio;
+    }
+
+    if(audioRef.current.paused) audioRef.current.play();
+    else audioRef.current.pause();
+  }, [track]);
+
+  const close = useCallback(() => {
+    if(audioRef.current && !audioRef.current.paused) audioRef.current.pause();
+    dispatch(setModal(undefined));
+  }, [dispatch]);
+
+  return (
+    !track ? null :
+    <TrackDetailsView
+      title={track.title}
+      rank={track.position}
+      genre={genre}
+      artist={track.artist.name}
+      duration={track.duration}
+      img={track.album.cover_big}
+      preview={track.preview}
+      playing={playing}
+
+      close={close}
+      playPause={playPause}
+    />
+  )
+}
+
+export default TrackDetails;
+
+export type ViewProps = {
   title: string,
   rank: number,
   genre?: string,
@@ -14,13 +68,16 @@ export type Props = {
   duration: number,
   img: string
   preview?: string,
-  close: () => void
+  playing?: boolean,
+
+  close: () => void,
+  playPause: () => void
 }
 
-const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, img, preview, close }) => {
+export const TrackDetailsView: React.FC<ViewProps> = (props) => {
+  const { title, rank, genre, playing, artist,
+          duration, img, preview, close, playPause } = props;
   const [time, dateTime] = formatDuration(duration);
-  const [playing, setPlaying] = useState(false);
-  const ref = useRef<HTMLAudioElement>();
   const [sizeRef, opacityRef] = useLoad<HTMLElement, HTMLDivElement>([
     {
       from: "scale-0",
@@ -32,39 +89,15 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
     }
   ]);
 
-  function handlePlay() {
-    if(!preview) return;
-
-    if(!ref.current) {
-      const audio = new Audio(preview);
-      audio.addEventListener("play", () => setPlaying(true));
-      audio.addEventListener("pause", () => setPlaying(false));
-      audio.addEventListener("ended", () => {
-        setPlaying(false);
-        audio.currentTime = 0;
-      });
-
-      ref.current = audio;
-    }
-
-    if(ref.current.paused) ref.current.play();
-    else ref.current.pause();
-  }
-
-  function handleClose() {
-    if(ref.current && !ref.current.paused) ref.current.pause();
-    close();
-  }
-
   return (
     <div ref={opacityRef} className="backdrop transition-opacity">
       <section ref={sizeRef} className="modal">
         <button
           className="absolute top-0 right-0 h-12 p-4 m-2
                      btn-transparent md:btn rounded-full z-50"
-          onClick={handleClose}
+          onClick={close}
         >
-          <Cancel className="fill-slate-300 h-full"/>
+          <Cancel className="fill-slate-50 sm:fill-slate-300 h-full"/>
         </button>
         <div
           className="relative grid-side aspect-square w-full sm:h-72
@@ -75,7 +108,7 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
             <button
               className="absolute central p-2 hover:p-1 aspect-square h-1/3
                          drop-shadow-lg transition-all"
-              onClick={handlePlay}
+              onClick={playPause}
             >
               {playing ? (
                 <Pause className="fill-slate-50 h-full m-auto"/>
@@ -119,7 +152,5 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
         </div>
       </section>
     </div>
-  )
+  );
 }
-
-export default TrackDetails

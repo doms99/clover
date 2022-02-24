@@ -1,12 +1,8 @@
 import { RefObject, useLayoutEffect, useRef } from "react";
 
-function getPosition(progress: number, start: number, ) {
-  const mul = progress < 0.5 ? 1 - Math.pow(progress, 2) :  Math.pow(1 - progress, 2);
-
-  return mul * start;
-}
-
 function animate(ref: RefObject<HTMLElement>, duration: number, offset: { top: number, left: number }) {
+  if(!ref.current!.animate) return;
+
   ref.current!.animate([
     { transform: `translate(${offset.left}px, ${offset.top}px)` },
     {transform: "translate(0, 0)"}

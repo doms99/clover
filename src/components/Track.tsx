@@ -1,30 +1,67 @@
 import Arrow from "../icons/Arrow";
+import { Track as TrackType } from "../api/types";
 import { useReorder } from "../hooks";
 import { formatDuration } from "../utils";
+import React, { useCallback } from "react";
+import { useDispatch } from "../redux/hooks";
+import { setModal } from "../redux/slice";
 
 export type Props = {
-  title: string,
-  rank: number,
-  artist: string,
-  duration: number,
-  img: string,
-  expand?: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void
+  track?: TrackType
 }
 
-const defaultProps: Props = {
+const defaultProps = {
   title: "This is a filler title",
-  rank: 99,
+  rank: 0,
   artist: "Star Biggest",
   duration: 256,
   img: ""
 }
 
-const Track: React.FC<Props | {}> = (props) => {
-  const loading = Object.keys(props).length === 0;
-  const { title, rank, artist, duration, img, expand } = loading ? defaultProps : props as Props;
+const Track: React.FC<Props> = ({ track }) => {
+  let props = defaultProps;
+  if(track) {
+    props = {
+      artist: track.artist.name,
+      duration: track.duration,
+      rank: track.position,
+      title: track.title,
+      img: track.album.cover_small
+    }
+  }
+  const dispatch = useDispatch();
 
+  const expand = useCallback(() => {
+    dispatch(setModal(track));
+  }, [dispatch, track]);
+
+  return (
+    <TrackView
+      loading={!track}
+      img={props.img}
+      title={props.title}
+      rank={props.rank}
+      artist={props.artist}
+      duration={props.duration}
+      expand={expand}
+    />
+  )
+}
+
+export default Track;
+
+export type ViewProps = {
+  title: string,
+  rank: number,
+  artist: string,
+  duration: number,
+  img: string,
+  loading?: boolean,
+  expand: () => void
+}
+
+export const TrackView: React.FC<ViewProps> = ({ title, rank, artist, duration, img, expand, loading }) => {
   const ref = useReorder<HTMLDivElement>();
-
   const [time, dateTime] = formatDuration(duration);
   return (
     <div
@@ -33,14 +70,14 @@ const Track: React.FC<Props | {}> = (props) => {
     >
       <article
         className={`grid grid-cols-[min-content_1fr_1fr_min-content] grid-rows-[2.5rem]
-                  w-full h-16 p-3 ${loading && "font-filler text-slate-200 animate-pulse"}`}
+                  w-full h-16 p-3 ${loading && "loading"}`}
       >
         <div className="flex items-center h-full">
           <h6 className="ml-2 mr-4 font-semibold">
             {rank.toString().padStart(2, '0')}
           </h6>
           <div
-            style={{backgroundImage: `url(${img})`}}
+            style={loading ? {} : {backgroundImage: `url(${img})`}}
             title="Album cover"
             className="aspect-square h-full rounded-md bg-central bg-slate-300"
           />
@@ -68,7 +105,5 @@ const Track: React.FC<Props | {}> = (props) => {
         )}
       </article>
     </div>
-  )
+  );
 }
-
-export default Track

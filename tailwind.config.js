@@ -1,3 +1,4 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   content: ["./src/**/*.{html,tsx,ts,jsx,js}"],
@@ -12,7 +13,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'filler': ['Flow Block']
+        'filler': ['Flow Block'],
+        'sans': ['Montserrat', ...defaultTheme.fontFamily.sans]
       },
       fontSize: {
         'title': ['6rem', '6.1rem'],
