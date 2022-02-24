@@ -4,7 +4,6 @@
   "private": true,
   "proxy": "https://api.deezer.com/",
   "dependencies": {
-    "@react-spring/web": "^9.4.3",
     "@reduxjs/toolkit": "^1.7.2",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.3",

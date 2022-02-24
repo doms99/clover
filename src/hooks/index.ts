@@ -1,10 +1,24 @@
-import { useSpring } from "@react-spring/web";
-import { useLayoutEffect, useRef } from "react";
+import { RefObject, useLayoutEffect, useRef } from "react";
 
-export function useReorder<T extends HTMLElement>() {
+function getPosition(progress: number, start: number, ) {
+  const mul = progress < 0.5 ? 1 - Math.pow(progress, 2) :  Math.pow(1 - progress, 2);
+
+  return mul * start;
+}
+
+function animate(ref: RefObject<HTMLElement>, duration: number, offset: { top: number, left: number }) {
+  ref.current!.animate([
+    { transform: `translate(${offset.left}px, ${offset.top}px)` },
+    {transform: "translate(0, 0)"}
+  ], {
+    duration,
+    easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+  });
+}
+
+export function useReorder<T extends HTMLElement>(duration: number = 500) {
   const ref = useRef<T>(null);
   const prev = useRef({ top: 0, left: 0, first: true });
-  const [props, animate] = useSpring(() => ({ x: 0, y: 0 }));
 
   useLayoutEffect(() => {
     if(!ref.current) return;
@@ -12,23 +26,22 @@ export function useReorder<T extends HTMLElement>() {
     if(prev.current.top === ref.current.offsetTop &&
        prev.current.left === ref.current.offsetLeft) return;
 
-    if(!prev.current.first) {
-      animate.start({
-        from: {
-          x: prev.current.left - ref.current.offsetLeft,
-          y: prev.current.top - ref.current.offsetTop
-        },
-        to: { x: 0, y: 0 }
-      });
-    }
+    const previous = prev.current;
     prev.current = {
       left: ref.current.offsetLeft,
       top: ref.current.offsetTop,
       first: false
     }
+
+    if(prev.current.first) return;
+
+    animate(ref, duration, {
+      left: previous.left - ref.current.offsetLeft,
+      top: previous.top - ref.current.offsetTop
+    });
   });
 
-  return [ref, props] as const;
+  return ref;
 }
 
 export type Direction = {
@@ -36,8 +49,10 @@ export type Direction = {
   to: string
 }
 
-export function
-useLoad<T extends HTMLElement, G extends HTMLElement>([size, opacity]: [Direction, Direction]) {
+export function useLoad<
+  T extends HTMLElement,
+  G extends HTMLElement
+>([size, opacity]: [Direction, Direction]) {
   const sizeRef = useRef<T>(null);
   const opacityRef = useRef<G>(null);
 

@@ -1,4 +1,3 @@
-import { animated } from "@react-spring/web";
 import Arrow from "../icons/Arrow";
 import { useReorder } from "../hooks";
 import { formatDuration } from "../utils";
@@ -24,12 +23,11 @@ const Track: React.FC<Props | {}> = (props) => {
   const loading = Object.keys(props).length === 0;
   const { title, rank, artist, duration, img, expand } = loading ? defaultProps : props as Props;
 
-  const [ref, animProps] = useReorder<HTMLDivElement>();
+  const ref = useReorder<HTMLDivElement>();
 
   const [time, dateTime] = formatDuration(duration);
   return (
-    <animated.div
-      style={animProps}
+    <div
       ref={ref}
       className="rounded-lg bg-white drop-shadow-md shadow-slate-900"
     >
@@ -69,7 +67,7 @@ const Track: React.FC<Props | {}> = (props) => {
           </button>
         )}
       </article>
-    </animated.div>
+    </div>
   )
 }
 
