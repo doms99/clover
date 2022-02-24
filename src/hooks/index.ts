@@ -31,42 +31,27 @@ export function useReorder<T extends HTMLElement>() {
   return [ref, props] as const;
 }
 
-export function useLoadAndDispose<T extends HTMLElement>() {
-  const [props, animate] = useSpring(() => ({ transform: "translate(-50%, -50%) scale(0)" }));
-  const opacityRef = useRef<T>(null);
+export type Direction = {
+  from: string,
+  to: string
+}
+
+export function
+useLoad<T extends HTMLElement, G extends HTMLElement>([size, opacity]: [Direction, Direction]) {
+  const sizeRef = useRef<T>(null);
+  const opacityRef = useRef<G>(null);
 
   useLayoutEffect(() => {
-    animate.start({
-      transform: "translate(-50%, -50%) scale(1)",
-      config: {
-        mass: 0.3,
-        tension: 250
-      }
-    });
+    if(sizeRef.current) sizeRef.current.classList.add(size.from)
+    if(opacityRef.current) opacityRef.current.classList.add(opacity.from);
 
-    if(!opacityRef.current) return;
-
-    opacityRef.current.classList.add("before:opacity-60");
+    window.requestAnimationFrame(() => {
+      if(sizeRef.current) sizeRef.current.classList.add(size.to)
+      if(opacityRef.current) opacityRef.current.classList.add(opacity.to);
+    })
   });
 
-  function onExit(callback: () => void) {
-    animate.start({
-      transform: "translate(-50%, -50%) scale(0)",
-      config: {
-        precision: 0.1,
-        mass: 0.3,
-        tension: 250
-      },
-      onRest: callback
-    });
-
-
-    if(!opacityRef.current) return;
-
-    opacityRef.current.classList.add("before:opacity-0");
-  }
-
-  return [props, onExit, opacityRef] as const;
+  return [sizeRef, opacityRef] as const;
 }
 
 export function useScreenMinHeight<T extends HTMLElement>(ref: React.RefObject<T>) {

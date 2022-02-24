@@ -66,17 +66,6 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
 
   return (
     <>
-      {modal && <TrackDetails
-        img={modal.album.cover_big}
-        artist={modal.artist.name}
-        duration={modal.duration}
-        title={modal.title}
-        rank={modal.position}
-        genre={name}
-        album={modal.album.title}
-        preview={modal.preview}
-        close={() => setModal(undefined)}
-      />}
       <div ref={ref} className="grid grid-layout-lite md:grid-layout-full">
         <Header
           img={img}
@@ -130,6 +119,17 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
           </section>
         </main>
       </div>
+      {modal && <TrackDetails
+        img={modal.album.cover_big}
+        artist={modal.artist.name}
+        duration={modal.duration}
+        title={modal.title}
+        rank={modal.position}
+        genre={name}
+        album={modal.album.title}
+        preview={modal.preview}
+        close={() => setModal(undefined)}
+      />}
     </>
   )
 }

@@ -4,8 +4,7 @@ import Cancel from "../icons/Cancel";
 import Pause from "../icons/Pause";
 import Play from "../icons/Play";
 import Tag from "./Tag";
-import { useLoadAndDispose } from "../hooks";
-import { animated } from "@react-spring/web";
+import { useLoad } from "../hooks";
 
 export type Props = {
   title: string,
@@ -23,7 +22,16 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
   const [time, dateTime] = formatDuration(duration);
   const [playing, setPlaying] = useState(false);
   const ref = useRef<HTMLAudioElement>();
-  const [mainProps, onExit, opacityRef] = useLoadAndDispose<HTMLDivElement>();
+  const [sizeRef, opacityRef] = useLoad<HTMLElement, HTMLDivElement>([
+    {
+      from: "scale-0",
+      to: "scale-100"
+    },
+    {
+      from: "before:opacity-0",
+      to: "before:opacity-60"
+    }
+  ]);
 
   function handlePlay() {
     if(!preview) return;
@@ -46,16 +54,16 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
 
   function handleClose() {
     if(ref.current && !ref.current.paused) ref.current.pause();
-    onExit(close);
+    close();
   }
 
   return (
-    <div ref={opacityRef} className="backdrop">
-      <animated.section style={mainProps} className="fixed central grid grid-modal-lite sm:grid-modal-full gap-4
+    <div ref={opacityRef} className="backdrop transition-opacity">
+      <section ref={sizeRef} className="fixed central grid grid-modal-lite sm:grid-modal-full gap-4
                           w-5/6 max-w-full md:w-max max-h-[5/6] p-4 md:pr-16
                           font-medium text-left
                           bg-white rounded-3xl text-xl
-                          shadow-slate-800 drop-shadow-md"
+                          shadow-slate-800 drop-shadow-md transition-all"
       >
         <button
           className="absolute top-0 right-0 h-12 p-4 m-2 btn rounded-full z-50"
@@ -113,7 +121,7 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
             </Tag>
           </div>
         </div>
-      </animated.section>
+      </section>
     </div>
   )
 }
