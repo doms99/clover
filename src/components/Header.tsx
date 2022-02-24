@@ -9,7 +9,7 @@ const Header: React.FC<Props> = ({ img, children }) => {
     >
       <div
         style={{backgroundImage: `url(${img})`}}
-        className="absolute top-[-5%] left-[-5%] h-[110%] w-[110%] bg-none bg-center bg-cover blur-sm"
+        className="absolute top-[-5%] left-[-5%] h-[110%] w-[110%] bg-slate-600 bg-center bg-cover blur-sm"
       />
       <div className="relative flex flex-col justify-end h-full mx-8 md:mx-16 mb-8 mt-4 text-white">
         {children}

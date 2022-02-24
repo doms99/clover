@@ -39,8 +39,6 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
     });
   }, [dispatch, id, tracks]);
 
-
-
   let sortedTracks = useMemo(() => {
     if(!tracks) return;
 
