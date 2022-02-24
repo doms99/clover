@@ -54,7 +54,9 @@ useLoad<T extends HTMLElement, G extends HTMLElement>([size, opacity]: [Directio
   return [sizeRef, opacityRef] as const;
 }
 
-export function useScreenMinHeight<T extends HTMLElement>(ref: React.RefObject<T>) {
+export function useScreenMinHeight<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+
   useLayoutEffect(() => {
     const controller = new AbortController();
 
@@ -66,5 +68,7 @@ export function useScreenMinHeight<T extends HTMLElement>(ref: React.RefObject<T
 
     return () => controller.abort();
   });
+
+  return ref;
 }
 

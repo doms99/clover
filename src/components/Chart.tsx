@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Track as TrackType } from "../api/types";
 import { useScreenMinHeight } from "../hooks";
+import Arrow from "../icons/Arrow";
 import { useDispatch, useSelector } from "../redux/hooks";
 import { setTracks } from "../redux/slice";
 import Header from "./Header"
@@ -23,10 +24,8 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
   const [sort, setSort] = useState<Sort>("rank");
   const [modal, setModal] = useState<TrackType>();
   const tracks = useSelector(state => state.app.tracks)[id];
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useScreenMinHeight<HTMLDivElement>();
   const dispatch = useDispatch();
-
-  useScreenMinHeight(ref);
 
   useEffect(() => {
     if(tracks) return;
@@ -73,12 +72,44 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
           <h3 className="text-xl md:text-3xl mb-2 font-light">
             <span className="font-semibold">Top</span> {length}
           </h3>
-          <h1 className="text-title-md lg:text-title-lg xl:text-title font-bold">{name}</h1>
+          <h1 className="text-title-md lg:text-title-lg xl:text-title font-bold">
+            {name}
+          </h1>
+          <div className="md:hidden absolute right-0 top-0 drop-shadow-sm">
+            <button
+              onClick={previous}
+              className="inline-flex flex-center aspect-square
+                        h-12 p-4 mr-4 btn-transparent rounded-full"
+            >
+              <Arrow className="stroke-white h-full m-auto" />
+            </button>
+            <button
+              onClick={next}
+              className="inline-flex flex-center aspect-square
+                        h-12 p-4 btn-transparent rounded-full"
+            >
+              <Arrow className="stroke-white h-full m-auto rotate-180" />
+            </button>
+          </div>
         </Header>
-        <Navigation
-          next={next}
-          previous={previous}
-        />
+        <Navigation>
+          <div className="w-max m-auto ">
+            <button
+              onClick={previous}
+              className="inline-flex flex-center aspect-square
+                        h-12 p-4 mr-4 btn rounded-full"
+            >
+              <Arrow className="stroke-slate-300 h-full m-auto" />
+            </button>
+            <button
+              onClick={next}
+              className="inline-flex flex-center aspect-square
+                        h-12 p-4 btn rounded-full"
+            >
+              <Arrow className="stroke-slate-300 h-full m-auto rotate-180" />
+            </button>
+          </div>
+        </Navigation>
         <main className="grid-content w-full py-8 bg-slate-100">
           <div className="flex justify-between mb-6 mx-8 md:mx-16">
             <h3 className="text-xl font-medium">Tracks</h3>
@@ -94,12 +125,10 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
               <option value="desc">Longer first</option>
             </select>
           </div>
-          <section className={`relative grid
-                               grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3
-                               lg:grid-rows-${Math.ceil(length/2)}
-                               2xl:grid-rows-${Math.ceil(length/3)}
-                               lg:grid-flow-col
-                               gap-2 md:gap-4 mx-1 md:mx-16`
+          <section className={
+              `grid-track
+              lg:grid-rows-${Math.ceil(length/2)}
+              2xl:grid-rows-${Math.ceil(length/3)}`
           }>
             {!sortedTracks ? (
               Array.from(Array(10).keys()).map((i) => <Track key={'loader'+i}/>)
@@ -126,7 +155,6 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
         title={modal.title}
         rank={modal.position}
         genre={name}
-        album={modal.album.title}
         preview={modal.preview}
         close={() => setModal(undefined)}
       />}

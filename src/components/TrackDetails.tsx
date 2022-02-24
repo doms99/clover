@@ -13,12 +13,11 @@ export type Props = {
   artist: string,
   duration: number,
   img: string
-  album: string,
   preview?: string,
   close: () => void
 }
 
-const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, img, album, preview, close }) => {
+const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, img, preview, close }) => {
   const [time, dateTime] = formatDuration(duration);
   const [playing, setPlaying] = useState(false);
   const ref = useRef<HTMLAudioElement>();
@@ -59,25 +58,23 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
 
   return (
     <div ref={opacityRef} className="backdrop transition-opacity">
-      <section ref={sizeRef} className="fixed central grid grid-modal-lite sm:grid-modal-full gap-4
-                          w-5/6 max-w-full md:w-max max-h-[5/6] p-4 md:pr-16
-                          font-medium text-left
-                          bg-white rounded-3xl text-xl
-                          shadow-slate-800 drop-shadow-md transition-all"
-      >
+      <section ref={sizeRef} className="modal">
         <button
-          className="absolute top-0 right-0 h-12 p-4 m-2 btn rounded-full z-50"
+          className="absolute top-0 right-0 h-12 p-4 m-2
+                     btn-transparent md:btn rounded-full z-50"
           onClick={handleClose}
         >
           <Cancel className="fill-slate-300 h-full"/>
         </button>
         <div
-          className="relative grid-side aspect-square w-full sm:h-72 rounded-xl bg-central bg-slate-600 drop-shadow-sm overflow-hidden"
+          className="relative grid-side aspect-square w-full sm:h-72
+            rounded-xl bg-central bg-slate-600 drop-shadow-sm overflow-hidden"
         >
           <img src={img} alt="Album cover" className="h-full" />
           {preview && (
             <button
-              className="absolute central p-2 hover:p-1 aspect-square h-1/3 drop-shadow-lg transition-all"
+              className="absolute central p-2 hover:p-1 aspect-square h-1/3
+                         drop-shadow-lg transition-all"
               onClick={handlePlay}
             >
               {playing ? (
@@ -97,12 +94,18 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
         </Tag>
         <Tag label="Rank" >
           <p>
-            <span className="text-2xl md:text-title-md font-semibold text-slate-600">{formatOrdinal(rank)}</span>
-            {genre && <span className="text-xl md:text-3xl font-light text-slate-400">{` in ${genre}`}</span>}
+            <span className="text-2xl md:text-title-md font-semibold text-slate-600">
+              {formatOrdinal(rank)}
+            </span>
+            {genre && (
+              <span className="text-xl md:text-3xl font-light text-slate-400">
+                {` in ${genre}`}
+              </span>
+            )}
           </p>
         </Tag>
 
-        <div className="grid grid-cols-2 md:grid-cols-[auto_auto_auto] ">
+        <div className="grid grid-cols-2 ">
           <Tag label="Artist" >
             <address className="text-lg text-slate-600">
               {artist}
@@ -113,13 +116,6 @@ const TrackDetails: React.FC<Props> = ({ title, rank, genre, artist, duration, i
               <time dateTime={dateTime} className="m-auto">{time}</time>
             </p>
           </Tag>
-          <div className="col-span-2 md:col-span-1">
-            <Tag label="Album" >
-              <p className="text-lg text-slate-600">
-                {album}
-              </p>
-            </Tag>
-          </div>
         </div>
       </section>
     </div>
