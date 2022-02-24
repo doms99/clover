@@ -16,7 +16,7 @@ function animate(ref: RefObject<HTMLElement>, duration: number, offset: { top: n
   });
 }
 
-export function useReorder<T extends HTMLElement>(duration: number = 500) {
+export function useReorder<T extends HTMLElement>() {
   const ref = useRef<T>(null);
   const prev = useRef({ top: 0, left: 0, first: true });
 
@@ -33,9 +33,9 @@ export function useReorder<T extends HTMLElement>(duration: number = 500) {
       first: false
     }
 
-    if(prev.current.first) return;
+    if(previous.first) return;
 
-    animate(ref, duration, {
+    animate(ref, 500, {
       left: previous.left - ref.current.offsetLeft,
       top: previous.top - ref.current.offsetTop
     });

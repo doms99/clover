@@ -131,9 +131,9 @@ const Chart: React.FC<Props> = ({ img, name, id, next, previous }) => {
             {!sortedTracks ? (
               Array.from(Array(10).keys()).map((i) => <Track key={'loader'+i}/>)
             ) : (
-              sortedTracks.map((track, index) => (
+              sortedTracks.map((track) => (
                 <Track
-                  key={track.id}
+                  key={`${name}-${track.id}`}
                   img={track.album.cover_small}
                   artist={track.artist.name}
                   duration={track.duration}
