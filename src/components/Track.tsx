@@ -28,7 +28,7 @@ const Track: React.FC<Props | {}> = (props) => {
 
   const [time, dateTime] = formatDuration(duration);
   return (
-    <animated.div style={animProps} ref={ref} className="transition-transform rounded-lg bg-white drop-shadow-md shadow-slate-900">
+    <animated.div style={animProps} ref={ref} className="rounded-lg bg-white drop-shadow-md shadow-slate-900">
       <article
         className={`grid grid-cols-[min-content_1fr_1fr_min-content] grid-rows-[2.5rem]
                   w-full h-16 p-3 ${loading && "font-filler text-slate-200 animate-pulse"}`}
