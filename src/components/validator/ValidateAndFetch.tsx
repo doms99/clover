@@ -25,7 +25,7 @@ const ValidateAndFetch: React.FC<Props> = ({ chartId, trackId }) => {
 
   // Fetch tracks if not loaded
   useEffect(() => {
-    if(!loaded || (chart && chart.loaded)) return;
+    if(!loaded || !chart || (chart && chart.loaded)) return;
 
     dispatch(fetchTracks(chartId));
   }, [dispatch, loaded, chartId, chart]);
