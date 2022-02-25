@@ -11,8 +11,8 @@ import Track from "./Track"
 
 type Sort = "rank" | "asc" | "desc";
 
-const defaultGenre = {
-  name: "Best Genre",
+const defaultChart = {
+  name: "Best Chart",
   img: ""
 }
 
@@ -25,32 +25,12 @@ const Chart: React.FC<Props> = ({ chartId }) => {
   const loaded = useSelector(state => state.app.loaded);
   const chartIds = useSelector(state => Object.keys(state.app.charts))
   const chart = useSelector(state => state.app.charts[chartId]);
-  const dispatch = useDispatch();
   const history = useHistory();
 
   const props = loaded ?{
     name: chart.data.name,
     img: chart.data.picture_big
-  } : defaultGenre;
-
-  // Fetch genres if not loaded
-  useEffect(() => {
-    if(loaded) {
-      if(!chartIds.includes(chartId.toString())) {
-        history.replace("/error");
-      }
-      return;
-    }
-
-    dispatch(fetchGenres());
-  }, [dispatch, loaded, chartIds, chartId, history]);
-
-  // Fetch tracks if not loaded
-  useEffect(() => {
-    if((chart && chart.loaded) || !loaded) return;
-
-    dispatch(fetchTracks(chartId));
-  }, [dispatch, loaded, chartId, chart]);
+  } : defaultChart;
 
   let sortedTracks = useMemo(() => {
     if(!chart || !chart.loaded) return;
