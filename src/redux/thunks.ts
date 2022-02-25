@@ -3,7 +3,7 @@ import { ThunkAction } from "redux-thunk";
 import { setError, setGenres, setTracks } from "./slice"
 import { RootState } from "./store";
 
-const base = "https://cors-anywhere.herokuapp.com/https://api.deezer.com/chart";
+const base = "https://cors-anywhere.herokuapp.com/https://api.deezer.com";
 
 export function fetchGenres() {
   const fetchGenresThunk: ThunkAction<void, RootState, void, Action> = (dispatch) => {
