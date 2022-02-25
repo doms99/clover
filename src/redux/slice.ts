@@ -1,50 +1,55 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Genre, Track } from "../api/types";
+import { GenreApi, TrackApi } from "../api/types";
+
+export type Chart = {
+  data: GenreApi,
+  loaded: boolean,
+  tracks: {
+    [key: number]: TrackApi
+  }
+}
 
 export type State = {
-  genres: Genre[],
-  currentGenre: number,
-  tracks: {
-    [key: string]: Track[]
+  loaded: boolean,
+  charts: {
+    [key: number]: Chart
   },
-  currentTracks: Track[],
-  modal: Track | undefined,
-  error: string | undefined,
+  error: string | undefined
 }
+
+const initialState: State = {
+  loaded: false,
+  charts: {},
+  error: undefined
+};
 
 export const slice = createSlice({
   name: 'app',
-  initialState: {
-    genres: [],
-    currentGenre: 0,
-    tracks: {},
-    currentTracks: [],
-    modal: undefined,
-    error: undefined
-  } as State,
+  initialState,
   reducers: {
-    setGenres(state, action: PayloadAction<Genre[]>) {
-      const { currentGenre, tracks } = state;
+    setGenres(state, action: PayloadAction<GenreApi[]>) {
+      const res: typeof initialState.charts = {};
 
-      state.genres = action.payload;
-      state.currentTracks = tracks[action.payload[currentGenre].id];
+      for(let genre of action.payload) {
+        const gObj = {
+          data: genre,
+          loaded: false,
+          tracks: {}
+        };
+
+        res[genre.id] = gObj
+      }
+
+      state.charts = res;
+      state.loaded = true;
     },
-    setTracks(state, action: PayloadAction<{ genreId: number, tracks: Track[] }>) {
+    setTracks(state, action: PayloadAction<{ genreId: number, tracks: TrackApi[] }>) {
       const { genreId, tracks } = action.payload;
-      state.tracks = {
-        ...state.tracks,
-        [genreId]: tracks
-      };
-    },
-    setModal(state, action: PayloadAction<Track | undefined>) {
-      state.modal = action.payload;
-    },
-    setCurrentGenre(state, action: PayloadAction<-1 | 1>) {
-      const { currentGenre, genres, tracks } = state;
 
-      const newCurr = (currentGenre + action.payload + genres.length) % genres.length;
-      state.currentGenre = newCurr;
-      state.currentTracks = tracks[genres[newCurr].id];
+      state.charts[genreId].loaded = true;
+      for(let track of tracks) {
+        state.charts[genreId].tracks[track.id] = track;
+      }
     },
     setError(state, action: PayloadAction<string | undefined>) {
       state.error = action.payload;
@@ -52,6 +57,6 @@ export const slice = createSlice({
   }
 });
 // Action creators are generated for each case reducer function
-export const { setGenres, setTracks, setModal, setCurrentGenre, setError } = slice.actions;
+export const { setGenres, setTracks, setError } = slice.actions;
 
 export default slice.reducer;

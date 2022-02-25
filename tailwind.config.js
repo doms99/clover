@@ -8,7 +8,11 @@ module.exports = {
     'lg:grid-rows-4',
     '2xl:grid-rows-4',
     'lg:grid-rows-3',
-    '2xl:grid-rows-3'
+    '2xl:grid-rows-3',
+    'scale-0',
+    'scale-100',
+    'before:opacity-0',
+    'before:opacity-60'
   ],
   theme: {
     extend: {

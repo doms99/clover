@@ -6,15 +6,19 @@ import Play from "../icons/Play";
 import Tag from "./Tag";
 import { useLoad } from "../hooks";
 import { useSelector } from "../redux/hooks";
-import { useDispatch } from "react-redux";
-import { setModal } from "../redux/slice";
+import { Redirect, useHistory } from "react-router-dom";
 
-const TrackDetails: React.FC = () => {
+export type Props = {
+  chartId: number,
+  trackId: number
+}
+
+const TrackDetails: React.FC<Props> = ({ chartId, trackId }) => {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>();
-  const track = useSelector(state => state.app.modal);
-  const genre = useSelector(state => state.app.genres[state.app.currentGenre]?.name);
-  const dispatch = useDispatch();
+  const track = useSelector(state => state.app.charts[chartId]?.tracks[trackId]);
+  const genre = useSelector(state => state.app.charts[chartId]?.data.name);
+  const history = useHistory();
 
   const playPause = useCallback(() => {
     if(!track || !track.preview) return;
@@ -37,11 +41,11 @@ const TrackDetails: React.FC = () => {
 
   const close = useCallback(() => {
     if(audioRef.current && !audioRef.current.paused) audioRef.current.pause();
-    dispatch(setModal(undefined));
-  }, [dispatch]);
+    history.goBack();
+  }, [history]);
 
   return (
-    !track ? null :
+    !track ? <Redirect to="/error" /> :
     <TrackDetailsView
       title={track.title}
       rank={track.position}

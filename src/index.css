@@ -130,11 +130,11 @@
   }
 
   .btn {
-    @apply transition-all hover:bg-slate-100 active:bg-slate-200;
+    @apply transition-colors hover:bg-slate-100 active:bg-slate-200;
   }
 
   .btn-transparent {
-    @apply transition-all hover:bg-white/30 active:bg-white/50;
+    @apply transition-colors hover:bg-white/30 active:bg-white/50;
   }
 
   .flex-center {

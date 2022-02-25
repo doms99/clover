@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Track as TrackType } from "../api/types";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { TrackApi as TrackType } from "../api/types";
 import { useScreenMinHeight } from "../hooks";
 import Arrow from "../icons/Arrow";
 import { useDispatch, useSelector } from "../redux/hooks";
-import { setCurrentGenre } from "../redux/slice";
-import { fetchGenresAndCurrTracks, fetchTracks } from "../redux/thunks";
+import { fetchGenres, fetchTracks } from "../redux/thunks";
 import Header from "./Header"
 import Navigation from "./Navigation";
 import Track from "./Track"
@@ -16,62 +16,71 @@ const defaultGenre = {
   img: ""
 }
 
-const Chart: React.FC = () => {
-  const [sort, setSort] = useState<Sort>("rank");
-  const tracks = useSelector(state => state.app.tracks[state.app.genres[state.app.currentGenre]?.id]);
-  const genre = useSelector(state => state.app.genres[state.app.currentGenre]);
-  const loaded = useSelector(state => state.app.genres.length !== 0);
-  const dispatch = useDispatch();
+export type Props = {
+  chartId: number
+}
 
-  let props = defaultGenre;
-  if(genre) {
-    props = {
-      name: genre.name,
-      img: genre.picture_big
-    }
-  }
+const Chart: React.FC<Props> = ({ chartId }) => {
+  const [sort, setSort] = useState<Sort>("rank");
+  const loaded = useSelector(state => state.app.loaded);
+  const chartIds = useSelector(state => Object.keys(state.app.charts))
+  const chart = useSelector(state => state.app.charts[chartId]);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const props = loaded ?{
+    name: chart.data.name,
+    img: chart.data.picture_big
+  } : defaultGenre;
 
   // Fetch genres if not loaded
   useEffect(() => {
-    if(loaded) return;
+    if(loaded) {
+      if(!chartIds.includes(chartId.toString())) {
+        history.replace("/error");
+      }
+      return;
+    }
 
-    dispatch(fetchGenresAndCurrTracks());
-  }, [dispatch, loaded]);
+    dispatch(fetchGenres());
+  }, [dispatch, loaded, chartIds, chartId, history]);
 
   // Fetch tracks if not loaded
   useEffect(() => {
-    if(tracks || !loaded) return;
+    if((chart && chart.loaded) || !loaded) return;
 
-    dispatch(fetchTracks());
-  }, [dispatch, tracks, loaded]);
+    dispatch(fetchTracks(chartId));
+  }, [dispatch, loaded, chartId, chart]);
 
   let sortedTracks = useMemo(() => {
-    if(!tracks) return;
+    if(!chart || !chart.loaded) return;
 
     switch(sort) {
       case "asc": {
-        return [...tracks].sort((a, b) => a.duration - b.duration);
+        return Object.values(chart.tracks).sort((a, b) => a.duration - b.duration);
       }
       case "desc": {
-        return [...tracks].sort((a, b) => b.duration - a.duration);
+        return Object.values(chart.tracks).sort((a, b) => b.duration - a.duration);
       }
       default: {
-        return tracks;
+        return Object.values(chart.tracks).sort((a, b) => a.position - b.position);
       }
     }
-  }, [tracks, sort]);
+  }, [chart, sort]);
 
   const onSortChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setSort(e.target.value as Sort)
   }, []);
 
   const next = useCallback(() => {
-    dispatch(setCurrentGenre(1));
-  }, [dispatch]);
+    const next = (chartIds.indexOf(chartId.toString())+1 + chartIds.length) % chartIds.length;
+    history.push(`/chart/${chartIds[next]}`)
+  }, [chartId, chartIds, history]);
 
   const previous = useCallback(() => {
-    dispatch(setCurrentGenre(-1));
-  }, [dispatch]);
+    const prev = (chartIds.indexOf(chartId.toString())-1 + chartIds.length) % chartIds.length;
+    history.push(`/chart/${chartIds[prev]}`)
+  }, [chartId, chartIds, history]);
 
   return (
     <ChartView
@@ -87,7 +96,7 @@ const Chart: React.FC = () => {
   )
 }
 
-export default Chart;
+export default memo(Chart);
 
 export type ViewProps = {
   loading?: boolean,

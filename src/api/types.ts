@@ -1,4 +1,4 @@
-export type Genre = {
+export type GenreApi = {
   id: number,
   name: string,
   picture: string,
@@ -8,7 +8,7 @@ export type Genre = {
   picture_xl: string
 }
 
-export type Album = {
+export type AlbumApi = {
   id: number,
   title: string,
   cover: string,
@@ -18,7 +18,7 @@ export type Album = {
   cover_xl: string,
 }
 
-export type Artist = {
+export type ArtistApi = {
   id: number,
   name: string,
   link: string,
@@ -30,7 +30,7 @@ export type Artist = {
   radio: boolean
 }
 
-export type Track = {
+export type TrackApi = {
   id: number,
   title: string,
   title_short: string,
@@ -41,6 +41,6 @@ export type Track = {
   explicit_lyrics: boolean,
   preview: string,
   position: number,
-  artist: Artist,
-  album: Album
+  artist: ArtistApi,
+  album: AlbumApi
 }

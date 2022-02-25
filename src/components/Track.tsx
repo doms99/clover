@@ -1,10 +1,9 @@
 import Arrow from "../icons/Arrow";
-import { Track as TrackType } from "../api/types";
+import { TrackApi as TrackType } from "../api/types";
 import { useReorder } from "../hooks";
 import { formatDuration } from "../utils";
 import React, { useCallback } from "react";
-import { useDispatch } from "../redux/hooks";
-import { setModal } from "../redux/slice";
+import { useHistory } from "react-router-dom";
 
 export type Props = {
   track?: TrackType
@@ -19,6 +18,7 @@ const defaultProps = {
 }
 
 const Track: React.FC<Props> = ({ track }) => {
+  const history = useHistory();
   let props = defaultProps;
   if(track) {
     props = {
@@ -29,11 +29,14 @@ const Track: React.FC<Props> = ({ track }) => {
       img: track.album.cover_small
     }
   }
-  const dispatch = useDispatch();
 
   const expand = useCallback(() => {
-    dispatch(setModal(track));
-  }, [dispatch, track]);
+    if(!track) return;
+    console.log(`${history.location.pathname}/track/${track.id}`);
+
+
+    history.push(`${history.location.pathname}/track/${track.id}`);
+  }, [history, track]);
 
   return (
     <TrackView
