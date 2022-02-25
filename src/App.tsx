@@ -11,7 +11,7 @@ function App() {
           const chartId = parseInt(props.match.params.chart);
 
           return isNaN(chartId) ? (
-            <Redirect to="/error" />
+            <NotFound />
           ) : (
             <Chart chartId={Math.max(0, chartId)} />
           )
@@ -21,7 +21,7 @@ function App() {
           const trackId = parseInt(props.match.params.track);
 
           return isNaN(chartId) || isNaN(trackId) ? (
-            <Redirect to="/error" />
+            <NotFound />
           ) : (
             <>
               <TrackDetails chartId={chartId} trackId={trackId} />
