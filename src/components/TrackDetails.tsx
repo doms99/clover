@@ -41,8 +41,8 @@ const TrackDetails: React.FC<Props> = ({ chartId, trackId }) => {
 
   const close = useCallback(() => {
     if(audioRef.current && !audioRef.current.paused) audioRef.current.pause();
-    history.goBack();
-  }, [history]);
+    history.push(`/chart/${chartId}`);
+  }, [history, chartId]);
 
   return (
     !track ? <Redirect to="/error" /> :
