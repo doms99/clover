@@ -1,10 +1,9 @@
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { TrackApi as TrackType } from "../api/types";
 import { useScreenMinHeight } from "../hooks";
 import Arrow from "../icons/Arrow";
-import { useDispatch, useSelector } from "../redux/hooks";
-import { fetchGenres, fetchTracks } from "../redux/thunks";
+import { useSelector } from "../redux/hooks";
 import Header from "./Header"
 import Navigation from "./Navigation";
 import Track from "./Track"
