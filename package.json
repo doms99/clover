@@ -2,7 +2,6 @@
   "name": "clover",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://api.deezer.com/",
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.2",
     "@testing-library/jest-dom": "^5.16.2",
