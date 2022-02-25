@@ -52,13 +52,21 @@ const Chart: React.FC<Props> = ({ chartId }) => {
   }, []);
 
   const next = useCallback(() => {
-    const next = (chartIds.indexOf(chartId.toString())+1 + chartIds.length) % chartIds.length;
-    history.push(`/chart/${chartIds[next]}`)
+    const index = (chartIds.indexOf(chartId.toString())+1 + chartIds.length) % chartIds.length;
+    const next = chartIds[index];
+
+    if(!next) return;
+
+    history.push(`/chart/${next}`);
   }, [chartId, chartIds, history]);
 
   const previous = useCallback(() => {
-    const prev = (chartIds.indexOf(chartId.toString())-1 + chartIds.length) % chartIds.length;
-    history.push(`/chart/${chartIds[prev]}`)
+    const index = (chartIds.indexOf(chartId.toString())-1 + chartIds.length) % chartIds.length;
+    const prev = chartIds[index];
+
+    if(!prev) return;
+
+    history.push(`/chart/${prev}`);
   }, [chartId, chartIds, history]);
 
   return (

@@ -68,7 +68,7 @@ export const TrackView: React.FC<ViewProps> = ({ title, rank, artist, duration, 
   const [time, dateTime] = formatDuration(duration);
   return (
     <div
-      ref={ref}
+      ref={loading ? undefined : ref}
       className="rounded-lg bg-white drop-shadow-md shadow-slate-900"
     >
       <article
