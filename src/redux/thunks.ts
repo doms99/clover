@@ -3,10 +3,12 @@ import { ThunkAction } from "redux-thunk";
 import { setError, setGenres, setTracks } from "./slice"
 import { RootState } from "./store";
 
+const base = "https://cors-anywhere.herokuapp.com/https://api.deezer.com/chart";
+
 export function fetchGenres() {
   const fetchGenresThunk: ThunkAction<void, RootState, void, Action> = (dispatch) => {
 
-    fetch("/genre")
+    fetch(`${base}/genre`)
     .then(res => {
       if(res.status !== 200) {
         throw new Error(`Error on /genre`);
@@ -32,7 +34,7 @@ export function fetchGenres() {
 
 export function fetchTracks(id: number) {
   const fetchTracksThunk: ThunkAction<void, RootState, void, Action> = (dispatch) => {
-    fetch(`/chart/${id}/tracks`)
+    fetch(`${base}/chart/${id}/tracks`)
     .then(res => {
       if(res.status !== 200) {
         throw new Error(`Error on /chart/${id}/tracks`);
