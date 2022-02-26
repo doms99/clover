@@ -22,10 +22,8 @@ export function fetchGenres() {
 
       dispatch(setGenres(res.data));
     })
-    .catch(err => {
-      console.error(err);
-
-      dispatch(setError("Error while fetching genres"));
+    .catch((err: Error) => {
+      dispatch(setError(err.message));
     });
   };
 
@@ -48,10 +46,8 @@ export function fetchTracks(id: number) {
 
       dispatch(setTracks({genreId: id, tracks: res.data}));
     })
-    .catch(err => {
-      console.error(err);
-
-      dispatch(setError("Error while fetching tracks"));
+    .catch((err: Error) => {
+      dispatch(setError(err.message));
     });
   };
 
